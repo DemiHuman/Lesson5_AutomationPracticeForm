@@ -1,28 +1,31 @@
 package tests;
 
+import com.codeborne.selenide.Configuration;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pages.RegPage;
+import utils.RandomUtils;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
-import static com.codeborne.selenide.Configuration.*;
 
 
 public class TestRegFormWithFakerAndRandomUtilsAndPageObjects {
 
     Logger logger = LoggerFactory.getLogger(TestRegFormWithFakerAndRandomUtilsAndPageObjects.class);
     RegPage regPage = new RegPage();
+    RandomUtils getPhone = new RandomUtils();
     Faker faker = new Faker();
 
     String firstName = faker.name().firstName(),
             lastName = faker.name().lastName(),
             email = faker.internet().emailAddress(),
-            mobile = regPage.getPhone(10),
-            day = "10",
+            mobile = getPhone.getRandomIntString(10),
+            gender = "Other",
+            day = "30",
             month = "July",
             year = "1997",
             subject1 = "Maths",
@@ -31,45 +34,39 @@ public class TestRegFormWithFakerAndRandomUtilsAndPageObjects {
             state = "Haryana",
             city = "Karnal";
 
+    String[] hobby = new String[]{"Sports", "Reading", "Music"};
+
     @BeforeAll
-    static void MainSetup() {
-        startMaximized = true;
-        browser = "chrome";
+    static void mainSetup() {
+        Configuration.startMaximized = true;
     }
 
     @Test
-    void CheckRegistrationForm() {
+    void checkRegistrationForm() {
         open("https://demoqa.com/automation-practice-form");
-        $(".practice-form-wrapper").shouldHave(text("Student Registration Form"));
+        $(".practice-form-wrapper").shouldHave(
+                text("Student Registration Form"));
 
-        //Name_&_Email
-        regPage.TypeFirstName(firstName);
-        regPage.TypeLastName(lastName);
-        regPage.TypeEmail(email);
-        //Gender
-        $("#gender-radio-3").parent().click();
-        //Mobile
-        $("#userNumber").setValue(mobile);
-        //Date_Of_Birth
+        regPage.addFirstName(firstName);
+        regPage.addLastName(lastName);
+        regPage.addEmail(email);
+        regPage.selectGender(gender);
+        regPage.addPhone(mobile);
         regPage.setBirthDay(day, month, year);
-        //Subjects
-        $("#subjectsInput").setValue(subject1).pressEnter();
-        $("#subjectsInput").setValue(subject2).pressEnter();
-        //Hobbies
-        $("#hobbies-checkbox-1").parent().click();
-        $("#hobbies-checkbox-2").parent().click();
-        $("#hobbies-checkbox-3").parent().click();
-        //Address
-        $("#currentAddress").setValue(currentAddress);
-        //State_&_City
-        $("#react-select-3-input").setValue(state).pressEnter();
-        $("#react-select-4-input").setValue(city).pressEnter();
-        //Button_"Submit"
+        regPage.addSubject(subject1);
+        regPage.addSubject(subject2);
+        regPage.selectHobby(hobby[0]);
+        regPage.selectHobby(hobby[1]);
+        regPage.selectHobby(hobby[2]);
+        regPage.addAddress(currentAddress);
+        regPage.selectState(state);
+        regPage.selectCity(city);
         $("#submit").click();
         logger.info("The filling was completed successfully!");
 
         //Checking_After_The_Filling_Reg_Form
-        $("#example-modal-sizes-title-lg").shouldHave(text("Thanks for submitting the form"));
+        $("#example-modal-sizes-title-lg").shouldHave(
+                text("Thanks for submitting the form"));
         $(".table-responsive").shouldHave(
                 text(firstName + " " + lastName),
                 text(email),
@@ -77,7 +74,7 @@ public class TestRegFormWithFakerAndRandomUtilsAndPageObjects {
                 text(mobile),
                 text(day + " " + month + "," + year),
                 text(subject1 + ", " + subject2),
-                text("Sports, Reading, Music"),
+                text(hobby[0] + ", " + hobby[1] + ", " + hobby[2]),
                 text(currentAddress),
                 text(state + " " + city)
         );

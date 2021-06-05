@@ -29,13 +29,12 @@ public class TestRegForm {
     Logger logger = LoggerFactory.getLogger(TestRegForm.class);
 
     @BeforeAll
-    static void MainSetup() {
+    static void mainSetup() {
         startMaximized = true;
-        browser = "chrome";
     }
 
     @Test
-    void CheckRegistrationForm() {
+    void checkRegistrationForm() {
         open("https://demoqa.com/automation-practice-form");
         //Name_&_Email
         $("#firstName").setValue(firstName);

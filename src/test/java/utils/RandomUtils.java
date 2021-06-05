@@ -7,9 +7,9 @@ public class RandomUtils {
     Random random = new Random();
 
     /**
-     * Метод генерирует строку из цифр
+     * Метод генерирует строку из цифр указанной длины
      *
-     * @param value длина строка
+     * @param value длина строки
      * @return string
      */
     public String getRandomIntString(int value) {
